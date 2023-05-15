@@ -8,3 +8,7 @@ execute:
 
 dev:
 	npm run dev
+
+lint:
+	npm run lint
+	npm run format
