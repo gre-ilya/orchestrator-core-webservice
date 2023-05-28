@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  administrative:
+    build:
+      dockerfile: "Dockerfile"
+    volumes:
+      - './:/app-dir'
+    env_file:
+      - './.env'
+    command: bash -c "tail -f /dev/null"
+    ports:
+      - '8000:8000'
