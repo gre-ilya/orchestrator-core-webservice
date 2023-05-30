@@ -1,60 +1,113 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "REST API for Swagger Documentation",
+    "title": "Administrative webservice REST API ",
     "version": "1.0.0"
   },
   "schemes": ["http"],
-  "servers": [{ "url": "http://localhost:8000/" }],
   "paths": {
-    "/deploy": {
+    "/api/deploys": {
       "post": {
-        "tags": ["ExampleEndpoints"],
-        "summary": "Send a text to the server",
-        "description": "Send a message to the server and get a response added to the original text.",
+        "tags": ["deploys"],
+        "description": "Start deploy on orchestrator",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ExampleSchemaHeader"
+                "$ref": "#/components/schemas/CreateDeployDTO"
               }
             }
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Success",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExampleSchemaBody"
-                }
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["deploys"],
+        "description": "Scale nodes amount on orchestrator deployment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScaleDeployDTO"
               }
             }
-          },
-          "404": { "description": "Not found" },
-          "500": { "description": "Internal server error" }
+          }
+        },
+        "responses": {
+          "200": { "description": "Success" },
+        }
+      },
+      "delete": {
+        "tags": ["deploys"],
+        "description": "Delete deployment from orchestrator",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StopDeployDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Success" }
         }
       }
     }
   },
   "components": {
     "schemas": {
-      "ExampleSchemaBody": {
+      "CreateDeployDTO": {
         "properties": {
-          "responseText": {
+          "repositoryURL": {
             "type": "string",
-            "example": "This is some example string! This is an endpoint"
+            "example": "https://github.com/gre-ilya/dummy-nest-project.git"
+          },
+          "port": {
+            "type": "number",
+            "example": "228"
+          },
+          "internalPort": {
+            "type": "number",
+            "example": "322"
+          },
+          "nodesAmount": {
+            "type": "number",
+            "example": "2"
+          },
+          "mainDirectoryPath": {
+            "type": "string",
+            "example": "."
           }
         }
       },
-      "ExampleSchemaHeader": {
-        "required": ["text"],
+      "ScaleDeployDTO": {
         "properties": {
-          "text": {
-            "type": "string",
-            "example": "This is some example string!"
+          "port": {
+            "type": "number",
+            "example": "228"
+          },
+          "nodesAmount": {
+            "type": "number",
+            "example": "2"
+          }
+        }
+      },
+      "StopDeployDTO": {
+        "properties": {
+          "port": {
+            "type": "number",
+            "example": "322"
           }
         }
       }
