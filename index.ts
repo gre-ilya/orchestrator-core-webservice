@@ -6,6 +6,7 @@ import { NodeSSH } from 'node-ssh';
 import bodyParser from 'body-parser';
 import { CreateDeployDTO } from './dto/createDeployDTO';
 import { StopDeployDTO } from './dto/stopDeployDTO';
+import { ScaleDeployDTO } from './dto/scaleDeployDTO';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ const ssh = new NodeSSH()
 const app: Express = express();
 const serverPort = Number(process.env.PORT);
 
-function response(res: Response) {
+function response200 (res: Response) {
   if (ssh.isConnected()) {
     res.sendStatus(200);
     return true;
@@ -53,14 +54,14 @@ app.post('/deploy', async (req: Request, res: Response) => {
     req.body.nodeAmount,
     req.body.mainDirectoryPath
   );
-  if (!response(res)) {
+  if (!response200(res)) {
     return;
   }
 
   const command = `/vkr/deploy.sh ${dto.repositoryURL} ${dto.port} ${dto.internalPort}
-   ${dto.nodeAmount} ${dto.mainDirectoryPath}`;
+   ${dto.nodesAmount} ${dto.mainDirectoryPath}`;
   if (DEBUG) {
-    console.log(command)
+    console.log(command);
   } else {
     ssh.execCommand(command)
       .then((resolve) => {
@@ -72,9 +73,14 @@ app.post('/deploy', async (req: Request, res: Response) => {
   }
 });
 
+app.patch('/deploy', async (req: Request, res: Response) => {
+  const dto = new ScaleDeployDTO(req.body.port, req.body.nodesAmount);
+
+});
+
 app.delete('/deploy', async (req: Request, res: Response) => {
   const dto = new StopDeployDTO(req.body.port);
-  if (!response(res)) {
+  if (!response200(res)) {
     return;
   }
   const command = `/vkr/delete.sh ${dto.port}`
