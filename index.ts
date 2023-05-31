@@ -3,7 +3,7 @@ import { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.json';
-import { NodeSSH } from 'node-ssh';
+import { NodeSSH, SSHExecCommandResponse } from 'node-ssh';
 import bodyParser from 'body-parser';
 import { CreateDeployDTO } from './dto/createDeployDTO';
 import { StopDeployDTO } from './dto/stopDeployDTO';
@@ -27,14 +27,24 @@ function response200(res: Response) {
 }
 
 function sendCommandToOrchestrator(command: string) {
+  let result: SSHExecCommandResponse | undefined;
   ssh
     .execCommand(command)
     .then((resolve) => {
-      console.log(resolve.stdout);
+      result = resolve;
+      return resolve;
     })
     .catch((err) => {
+      result = undefined;
       console.log(err);
     });
+  return result;
+}
+
+function updateDeployStatusOnWebapp(
+  orchestratorResponse: SSHExecCommandResponse,
+) {
+  return orchestratorResponse.code;
 }
 
 app.use('/api-swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -57,7 +67,7 @@ app.post('/api/deploys', async (req: Request, res: Response) => {
   if (!response200(res)) {
     return;
   }
-  sendCommandToOrchestrator(command);
+  updateDeployStatusOnWebapp(sendCommandToOrchestrator(command));
 });
 
 app.patch('/api/deploys', async (req: Request, res: Response) => {
@@ -71,7 +81,7 @@ app.patch('/api/deploys', async (req: Request, res: Response) => {
   if (!response200(res)) {
     return;
   }
-  sendCommandToOrchestrator(command);
+  updateDeployStatusOnWebapp(sendCommandToOrchestrator(command));
 });
 
 app.delete('/api/deploys', async (req: Request, res: Response) => {
@@ -85,7 +95,7 @@ app.delete('/api/deploys', async (req: Request, res: Response) => {
   if (!response200(res)) {
     return;
   }
-  sendCommandToOrchestrator(command);
+  updateDeployStatusOnWebapp(sendCommandToOrchestrator(command));
 });
 
 app.listen(serverPort, '0.0.0.0', () => {
