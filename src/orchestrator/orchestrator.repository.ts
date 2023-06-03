@@ -33,13 +33,13 @@ export class OrchestratorRepository {
       });
   }
   static deploy(
-    repositoryURL: string,
+    repository: string,
     port: number,
     internalPort: number,
     nodesAmount: number,
     mainDirectoryPath: string,
   ): Promise<SSHExecCommandResponse | undefined> {
-    const command = `/vkr/deploy.sh ${repositoryURL} ${port} ${internalPort} ${nodesAmount} ${mainDirectoryPath}`;
+    const command = `/vkr/deploy.sh ${repository} ${port} ${internalPort} ${nodesAmount} ${mainDirectoryPath}`;
     if (process.env.DEBUG === 'TRUE') {
       console.log(command);
     }

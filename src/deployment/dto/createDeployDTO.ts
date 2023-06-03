@@ -1,18 +1,12 @@
 export class CreateDeployDTO {
-  repositoryURL: string;
+  repository: string;
   port: number;
   internalPort: number;
   nodesAmount: number;
   mainDirectoryPath: string;
 
-  constructor(
-    repositoryUrl: string,
-    port: number,
-    internalPort: number,
-    nodesAmount: number,
-    mainDirectoryPath: string,
-  ) {
-    this.repositoryURL = repositoryUrl;
+  constructor(repository: string, port: number, internalPort: number, nodesAmount: number, mainDirectoryPath: string) {
+    this.repository = repository;
     this.port = port;
     this.internalPort = internalPort;
     this.nodesAmount = nodesAmount;

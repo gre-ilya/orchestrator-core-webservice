@@ -6,21 +6,34 @@ import { OrchestratorService } from '../orchestrator/orchestrator.service';
 
 const router = Router();
 
+/*
+Request Body: {
+  repository: string,
+  port: number,
+  internalPort: number,
+  nodesAmount: number,
+  mainDirectoryPath: string,
+  deploymentId: string
+}
+ */
+
 router.post('/deploys', async (req: Request, res: Response) => {
   const dto = new CreateDeployDTO(
-    req.body.repositoryURL,
+    req.body.repository,
     req.body.port,
     req.body.internalPort,
     req.body.nodesAmount,
     req.body.mainDirectoryPath,
+    // req.body.deploymentId,
   );
+  console.log(dto);
   if (!OrchestratorService.isConnected()) {
     res.sendStatus(500);
     return;
   }
   res.sendStatus(200);
   return OrchestratorService.deploy(
-    dto.repositoryURL,
+    dto.repository,
     dto.port,
     dto.internalPort,
     dto.nodesAmount,

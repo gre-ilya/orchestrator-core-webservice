@@ -12,13 +12,13 @@ export class OrchestratorService {
     return OrchestratorRepository.sendTask(taskEntity);
   }
   static deploy(
-    repositoryURL: string,
+    repository: string,
     port: number,
     internalPort: number,
     nodesAmount: number,
     mainDirectoryPath: string,
   ): Promise<SSHExecCommandResponse | undefined> {
-    return OrchestratorRepository.deploy(repositoryURL, port, internalPort, nodesAmount, mainDirectoryPath);
+    return OrchestratorRepository.deploy(repository, port, internalPort, nodesAmount, mainDirectoryPath);
   }
   static scale(port: number, nodesAmount: number) {
     return OrchestratorRepository.scale(port, nodesAmount);
