@@ -21,16 +21,16 @@ export class OrchestratorRepository {
         return false;
       });
   }
-  static isConnected(): boolean {
-    return this.orchestratorSSHConnection.isConnected();
+  static isConnected(): Promise<SSHExecCommandResponse | undefined> {
+    return this.orchestratorSSHConnection.execCommand('ls').catch((err) => {
+      return undefined;
+    });
   }
   static sendTask(taskEntity: string): Promise<SSHExecCommandResponse | undefined> {
-    return this.orchestratorSSHConnection
-      .execCommand(taskEntity)
-      .catch((err) => {
-        console.log(err);
-        return undefined;
-      });
+    return this.orchestratorSSHConnection.execCommand(taskEntity).catch((err) => {
+      console.log(err);
+      return undefined;
+    });
   }
   static deploy(
     repository: string,

@@ -26,26 +26,29 @@ router.post('/deploys', async (req: Request, res: Response) => {
     req.body.mainDirectoryPath,
     // req.body.deploymentId,
   );
-  console.log(dto);
-  if (!OrchestratorService.isConnected()) {
-    res.sendStatus(500);
-    return;
+  if (process.env.DEBUG === 'TRUE') {
+    console.log(dto);
   }
-  res.sendStatus(200);
-  return OrchestratorService.deploy(
-    dto.repository,
-    dto.port,
-    dto.internalPort,
-    dto.nodesAmount,
-    dto.mainDirectoryPath,
-  ).then((result) => {
-    if (!result) {
-      console.log('Deploy Error!');
+  OrchestratorService.isConnected().then((response) => {
+    if (!response) {
+      res.statusCode = 500;
+      res.send({
+        message: 'No connection with orchestrator system.',
+      });
       return;
     }
-    console.log(`
-    ${result.stdout}
-    `);
+    res.sendStatus(200);
+    OrchestratorService.deploy(dto.repository, dto.port, dto.internalPort, dto.nodesAmount, dto.mainDirectoryPath).then(
+      (result) => {
+        if (!result) {
+          console.log('Deploy Error!');
+          return;
+        }
+        console.log(`
+      ${result.stdout}
+      `);
+      },
+    );
   });
 });
 
