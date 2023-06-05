@@ -14,6 +14,7 @@ export class OrchestratorRepository {
         password: process.env.PASSWORD,
       })
       .then((): boolean => {
+        // console.log(`CONNECTED!!!`);
         return true;
       })
       .catch((err): boolean => {
@@ -27,6 +28,7 @@ export class OrchestratorRepository {
     });
   }
   static sendTask(taskEntity: string): Promise<SSHExecCommandResponse | undefined> {
+    console.log(`SEND TASK ${taskEntity}`);
     return this.orchestratorSSHConnection.execCommand(taskEntity).catch((err) => {
       console.log(err);
       return undefined;
