@@ -8,10 +8,10 @@ export class OrchestratorRepository {
     this.orchestratorSSHConnection
       .connect({
         host: process.env.HOST,
-        privateKey: process.env.PRIVATE_KEY,
-        passphrase: process.env.PASSPHRASE,
+        // privateKey: process.env.PRIVATE_KEY,
+        // passphrase: process.env.PASSPHRASE,
         username: process.env.USERNAME,
-        // password: process.env.PASSWORD,
+        password: process.env.PASSWORD,
       })
       .then((): boolean => {
         return true;

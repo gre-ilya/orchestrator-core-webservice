@@ -3,6 +3,7 @@ import { CreateDeployDTO } from './dto/createDeployDTO';
 import { ScaleDeployDTO } from './dto/scaleDeployDTO';
 import { StopDeployDTO } from './dto/stopDeployDTO';
 import { OrchestratorService } from '../orchestrator/orchestrator.service';
+import { WebappBackendService } from '../webapp-backend/webapp-backend.service';
 
 const router = Router();
 
@@ -40,13 +41,16 @@ router.post('/deploys', async (req: Request, res: Response) => {
     res.sendStatus(200);
     OrchestratorService.deploy(dto.repository, dto.port, dto.internalPort, dto.nodesAmount, dto.mainDirectoryPath).then(
       (result) => {
+        WebappBackendService.auth();
         if (!result) {
           console.log('Deploy Error!');
+          // WebappBackendService.updateDeployment('Deploy Error!', 'Failed', req.body.deploymentId);
           return;
         }
         console.log(`
-      ${result.stdout}
-      `);
+          ${result.stdout}
+        `);
+        // WebappBackendService.updateDeployment(result.stdout, 'Success', req.body.deploymentId);
       },
     );
   });

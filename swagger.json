@@ -69,7 +69,7 @@
     "schemas": {
       "CreateDeployDTO": {
         "properties": {
-          "repositoryURL": {
+          "repository": {
             "type": "string",
             "example": "https://github.com/gre-ilya/dummy-nest-project.git"
           },
@@ -88,6 +88,10 @@
           "mainDirectoryPath": {
             "type": "string",
             "example": "."
+          },
+          "deploymentId": {
+            "type": "string",
+            "example": "ac07eda4-fa7c-4293-ac9f-fb481b8d32bc"
           }
         }
       },
