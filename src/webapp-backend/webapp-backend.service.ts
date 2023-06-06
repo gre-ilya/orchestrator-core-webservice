@@ -1,8 +1,6 @@
 import axios from 'axios';
-import { response } from 'express';
 
 export class WebappBackendService {
-
   static accessToken: string;
   static refreshToken: string;
   static auth() {
@@ -11,7 +9,10 @@ export class WebappBackendService {
       backendHost = process.env.BACKEND_HOST;
     }
     axios
-      .post(backendHost + '/api/auth/login', { email: 'orchestrator@mail.ru', password: 'superpass' })
+      .post(backendHost + '/api/auth/login', {
+        email: process.env.BACKEND_EMAIL,
+        password: process.env.BACKEND_PASSWORD,
+      })
       .then((response) => {
         this.accessToken = response.data.accessToken;
         this.refreshToken = response.data.refreshToken;
@@ -25,6 +26,7 @@ export class WebappBackendService {
     if (process.env.BACKEND_HOST) {
       backendHost = process.env.BACKEND_HOST;
     }
+    // console.log(`=============UPDATE ${buildLogs}\n${deployLogs}\n${status} ===============`);
     axios.patch(
       backendHost + `/api/deployments/${deploymentId}`,
       {

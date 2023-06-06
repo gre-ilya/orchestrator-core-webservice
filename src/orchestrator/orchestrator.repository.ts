@@ -7,14 +7,13 @@ export class OrchestratorRepository {
   static connect() {
     this.orchestratorSSHConnection
       .connect({
-        host: process.env.HOST,
+        host: process.env.ORCHESTRATOR_HOST,
         // privateKey: process.env.PRIVATE_KEY,
         // passphrase: process.env.PASSPHRASE,
-        username: process.env.USERNAME,
-        password: process.env.PASSWORD,
+        username: process.env.ORCHESTRATOR_USERNAME,
+        password: process.env.ORCHESTRATOR_PASSWORD,
       })
       .then((): boolean => {
-        // console.log(`CONNECTED!!!`);
         return true;
       })
       .catch((err): boolean => {
@@ -28,7 +27,6 @@ export class OrchestratorRepository {
     });
   }
   static sendTask(taskEntity: string): Promise<SSHExecCommandResponse | undefined> {
-    console.log(`SEND TASK ${taskEntity}`);
     return this.orchestratorSSHConnection.execCommand(taskEntity).catch((err) => {
       console.log(err);
       return undefined;
