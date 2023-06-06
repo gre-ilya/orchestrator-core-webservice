@@ -104,6 +104,10 @@
           "nodesAmount": {
             "type": "number",
             "example": "2"
+          },
+          "deploymentId": {
+            "type": "string",
+            "example": "ac07eda4-fa7c-4293-ac9f-fb481b8d32bc"
           }
         }
       },
@@ -112,6 +116,10 @@
           "port": {
             "type": "number",
             "example": "322"
+          },
+          "deploymentId": {
+            "type": "string",
+            "example": "ac07eda4-fa7c-4293-ac9f-fb481b8d32bc"
           }
         }
       }

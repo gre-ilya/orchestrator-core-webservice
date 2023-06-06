@@ -25,11 +25,7 @@ router.post('/deploys', async (req: Request, res: Response) => {
     req.body.internalPort,
     req.body.nodesAmount,
     req.body.mainDirectoryPath,
-    // req.body.deploymentId,
   );
-  if (process.env.DEBUG === 'TRUE') {
-    console.log(dto);
-  }
   OrchestratorService.isConnected().then((response) => {
     if (!response) {
       res.statusCode = 500;
@@ -41,16 +37,22 @@ router.post('/deploys', async (req: Request, res: Response) => {
     res.sendStatus(200);
     OrchestratorService.deploy(dto.repository, dto.port, dto.internalPort, dto.nodesAmount, dto.mainDirectoryPath).then(
       (result) => {
-        // WebappBackendService.auth();
+        WebappBackendService.auth();
         if (!result) {
-          console.log('Deploy Error!');
-          // WebappBackendService.updateDeployment('Deploy Error!', 'Failed', req.body.deploymentId);
+          WebappBackendService.updateDeployment(
+            'No connection with orchestrator!',
+            '',
+            'Failed',
+            req.body.deploymentId,
+          );
           return;
         }
-        console.log(`
-          ${result.stdout} ${result.stderr} ${result.code}
-        `);
-        // WebappBackendService.updateDeployment(result.stdout, 'Success', req.body.deploymentId);
+        WebappBackendService.updateDeployment(
+          `${result.stdout}\n${result.stderr}\n`,
+          '',
+          'Success',
+          req.body.deploymentId,
+        );
       },
     );
   });
@@ -58,21 +60,24 @@ router.post('/deploys', async (req: Request, res: Response) => {
 
 router.patch('/deploys', async (req: Request, res: Response) => {
   const dto = new ScaleDeployDTO(req.body.port, req.body.nodesAmount);
-  if (!OrchestratorService.isConnected()) {
-    res.sendStatus(500);
-    return;
-  }
-  res.sendStatus(200);
-  OrchestratorService.scale(dto.port, dto.nodesAmount).then((result) => {
+  OrchestratorService.isConnected().then((result) => {
+    WebappBackendService.auth();
     if (!result) {
-      console.log('Deploy Error!');
+      WebappBackendService.updateDeployment(`No connection with orchestrator!`, '', 'Failed', req.body.deploymentId);
       return;
     }
-    console.log(`
+    res.sendStatus(200);
+    OrchestratorService.scale(dto.port, dto.nodesAmount).then((result) => {
+      if (!result) {
+        WebappBackendService.updateDeployment(`No connection with orchestrator!`, '', 'Failed', req.body.deploymentId);
+        return;
+      }
+      console.log(`
     ${result.stdout}
     `);
+    });
+    WebappBackendService.updateDeployment(`${result.stdout}\n${result.stderr}\n`, '', 'Success', req.body.deploymentId);
   });
-  // updateDeployStatusOnWebapp(await sendCommandToOrchestrator(command));
 });
 
 router.delete('/deploys', async (req: Request, res: Response) => {
