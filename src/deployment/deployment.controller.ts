@@ -39,23 +39,22 @@ router.post('/deploys', async (req: Request, res: Response) => {
     }
     res.sendStatus(200);
     OrchestratorService.deploy(dto.repository, dto.port, dto.internalPort, dto.nodesAmount, dto.mainDirectoryPath).then(
-      (result) => {
-        if (!result) {
+      (response) => {
+        if (!response) {
           WebappBackendService.updateDeployment(noConnectionBuildLog, '', 'Failed', req.body.deploymentId);
           return;
         }
-        if (result.stderr) {
-          console.log('result.stderr true ' + result.stderr);
+        if (response.stderr) {
+          console.log('response.stderr true ' + response.stderr);
         }
-        if (result.stdout) {
-          console.log('result stdout true ' + result.stdout);
+        if (response.stdout) {
+          console.log('response stdout true ' + response.stdout);
         }
-        const buildLogs = `${result.stderr}\n${result.stdout}\n`;
         let status = 'Success';
-        if (result.code != 0) {
+        if (response.code != 0) {
           status = 'Failed';
         }
-        WebappBackendService.updateDeployment(buildLogs, '', status, req.body.deploymentId);
+        WebappBackendService.updateDeployment(response.stderr, response.stdout, status, req.body.deploymentId);
       },
     );
   });
@@ -84,7 +83,7 @@ router.patch('/deploys', async (req: Request, res: Response) => {
       if (response.code != 0) {
         status = 'Failed';
       }
-      WebappBackendService.updateDeployment(buildLogs, '', status, req.body.deploymentId);
+      WebappBackendService.updateDeployment(response.stderr, response.stdout, status, req.body.deploymentId);
     });
   });
 });
@@ -107,13 +106,11 @@ router.delete('/deploys', async (req: Request, res: Response) => {
         WebappBackendService.updateDeployment(noConnectionBuildLog, '', 'Failed', req.body.deploymentId);
         return;
       }
-      let buildLogs = `${response.stderr}\n${response.stdout}\n`;
       let status = 'Failed';
       if (response.code != 0) {
-        buildLogs = `${response.stderr}\n`;
         status = 'Success';
       }
-      WebappBackendService.updateDeployment(buildLogs, '', status, req.body.deploymentId);
+      WebappBackendService.updateDeployment(response.stderr, response.stdout, status, req.body.deploymentId);
     });
   });
 });
