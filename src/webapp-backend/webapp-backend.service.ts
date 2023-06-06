@@ -27,20 +27,24 @@ export class WebappBackendService {
       backendHost = process.env.BACKEND_HOST;
     }
     // console.log(`=============UPDATE ${buildLogs}\n${deployLogs}\n${status} ===============`);
-    axios.patch(
-      backendHost + `/api/deployments/${deploymentId}`,
-      {
-        buildLogs: buildLogs,
-        deployLogs: deployLogs,
-        status: status,
-      },
-      {
-        headers: {
-          accept: '*/*',
-          Authorization: 'Bearer ' + this.accessToken,
-          'Content-Type': 'application/json',
+    axios
+      .patch(
+        backendHost + `/api/deployments/${deploymentId}`,
+        {
+          buildLogs: buildLogs,
+          deployLogs: deployLogs,
+          status: status,
         },
-      },
-    );
+        {
+          headers: {
+            accept: '*/*',
+            Authorization: 'Bearer ' + this.accessToken,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .catch((err) => {
+        console.log(err);
+      });
   }
 }

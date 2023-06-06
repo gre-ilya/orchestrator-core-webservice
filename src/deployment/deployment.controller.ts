@@ -52,7 +52,7 @@ router.post('/deploys', async (req: Request, res: Response) => {
         }
         const buildLogs = `${result.stderr}\n${result.stdout}\n`;
         let status = 'Success';
-        if (result.code == 0) {
+        if (result.code != 0) {
           status = 'Failed';
         }
         WebappBackendService.updateDeployment(buildLogs, '', status, req.body.deploymentId);
@@ -79,10 +79,9 @@ router.patch('/deploys', async (req: Request, res: Response) => {
         WebappBackendService.updateDeployment(noConnectionBuildLog, '', 'Failed', req.body.deploymentId);
         return;
       }
-      let buildLogs = `${response.stdout}\n`;
+      const buildLogs = `${response.stderr}\n${response.stdout}\n`;
       let status = 'Success';
-      if (response.stderr) {
-        buildLogs = `${response.stderr}\n`;
+      if (response.code != 0) {
         status = 'Failed';
       }
       WebappBackendService.updateDeployment(buildLogs, '', status, req.body.deploymentId);
@@ -108,11 +107,11 @@ router.delete('/deploys', async (req: Request, res: Response) => {
         WebappBackendService.updateDeployment(noConnectionBuildLog, '', 'Failed', req.body.deploymentId);
         return;
       }
-      let buildLogs = `${response.stdout}\n`;
-      let status = 'Success';
-      if (response.stderr) {
+      let buildLogs = `${response.stderr}\n${response.stdout}\n`;
+      let status = 'Failed';
+      if (response.code != 0) {
         buildLogs = `${response.stderr}\n`;
-        status = 'Failed';
+        status = 'Success';
       }
       WebappBackendService.updateDeployment(buildLogs, '', status, req.body.deploymentId);
     });
