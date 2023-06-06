@@ -44,12 +44,12 @@ router.post('/deploys', async (req: Request, res: Response) => {
           WebappBackendService.updateDeployment(noConnectionBuildLog, '', 'Failed', req.body.deploymentId);
           return;
         }
-        if (response.stderr) {
-          console.log('response.stderr true ' + response.stderr);
-        }
-        if (response.stdout) {
-          console.log('response stdout true ' + response.stdout);
-        }
+        // if (response.stderr) {
+        //   console.log('response.stderr true ' + response.stderr);
+        // }
+        // if (response.stdout) {
+        //   console.log('response stdout true ' + response.stdout);
+        // }
         let status = 'Success';
         if (response.code != 0) {
           status = 'Failed';
@@ -106,7 +106,7 @@ router.delete('/deploys', async (req: Request, res: Response) => {
         WebappBackendService.updateDeployment(noConnectionBuildLog, '', 'Failed', req.body.deploymentId);
         return;
       }
-      let status = 'Failed';
+      let status = 'Removed';
       if (response.code != 0) {
         status = 'Success';
       }
